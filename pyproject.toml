@@ -8,6 +8,7 @@ authors = ["derpferpmerp <cmfleming@eths202.org>"]
 python = "^3.8"
 inquirer = "^2.7.0"
 numpy = "^1.21.0"
+pytest = "^6.2.4"
 
 [tool.poetry.dev-dependencies]
 
