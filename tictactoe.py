@@ -205,49 +205,69 @@ def sortlist(lst):
 #	print(f"Diagonal Combs: {combsout}")
 #	return combsout
 
-def gen_win_diagonal(w, h, min2win=3, rinps=False):
-	if w == 3:
-		#return gen_win_diagonal_3(3,3,min2win=min2win)
-		return [[0, 4, 8], [2, 4, 6]]
-	ml = min2win
-	s = w
-	if ml > s: return []
-	B = np.array([[i] for i in [int(str(x)) for x in range(s**2)]])
-	B.shape = (s, s)
-	odds, evens = [[],[]]
-	for num in range(s):
-		if num % 2 == 0:
-			evens.append(num)
-		else:
-			odds.append(num)
-	lstarr = []
-	for itr in range(s):
-		lstarr.append(evens)
-		lstarr.append(odds)
-	lstarr = lstarr[0:s]
-	rows = [[B[g,x] for x in range(s)] for g in range(s)]
-	for itrind in range(s):
-		lstarr[itrind] = [{x + (s * itrind):[getind(rows,(x + (s * itrind))),rows[getind(rows,(x + (s * itrind)))].index(x + (s * itrind))]} for x in lstarr[itrind]]	
-	lstarr = {k:v for x in sum(lstarr,[]) for k,v in x.items()}
-	if rinps:
-		return [f"{list(x[::-1])[0]}{list(x[::-1])[1]}" for x in list(lstarr.values())]
-	groups = []
-	for itm in range(len(lstarr)):
-		if itm != len(lstarr) - 1:
-			for itr3 in range(itm,len(lstarr)-1):
-				try:
-					for mliter in range(2,ml+1):
-						if list(lstarr.values())[itr3][0] == list(lstarr.values())[itm][0] + (mliter-1):
-							if abs(list(lstarr.values())[itr3][1]-list(lstarr.values())[itm][1]) == (mliter-1):
-								groups.append([list(lstarr.keys())[itm],list(lstarr.keys())[itm + itr3]])
-				except IndexError:
-					continue
-	amt2merge = abs(ml - 1)
-	groups = [sortlist(g) for g in [sum(x,[]) for x in list(chunks(groups, amt2merge))]]
-	if "-v" in sys.argv[1::]:
-		print(f"Diagonal Combs: {groups}")
-	return groups
+# def gen_win_diagonal(w, h, min2win=3, rinps=False):
+# 	if w == 3:
+# 		#return gen_win_diagonal_3(3,3,min2win=min2win)
+# 		return [[0, 4, 8], [2, 4, 6]]
+# 	ml = min2win
+# 	s = w
+# 	if ml > s: return []
+# 	B = np.array([[i] for i in [int(str(x)) for x in range(s**2)]])
+# 	B.shape = (s, s)
+# 	odds, evens = [[],[]]
+# 	for num in range(s):
+# 		if num % 2 == 0:
+# 			evens.append(num)
+# 		else:
+# 			odds.append(num)
+# 	lstarr = []
+# 	for itr in range(s):
+# 		lstarr.append(evens)
+# 		lstarr.append(odds)
+# 	lstarr = lstarr[0:s]
+# 	rows = [[B[g,x] for x in range(s)] for g in range(s)]
+# 	for itrind in range(s):
+# 		lstarr[itrind] = [{x + (s * itrind):[getind(rows,(x + (s * itrind))),rows[getind(rows,(x + (s * itrind)))].index(x + (s * itrind))]} for x in lstarr[itrind]]	
+# 	lstarr = {k:v for x in sum(lstarr,[]) for k,v in x.items()}
+# 	if rinps:
+# 		return [f"{list(x[::-1])[0]}{list(x[::-1])[1]}" for x in list(lstarr.values())]
+# 	groups = []
+# 	for itm in range(len(lstarr)):
+# 		if itm != len(lstarr) - 1:
+# 			for itr3 in range(itm,len(lstarr)-1):
+# 				try:
+# 					for mliter in range(2,ml+1):
+# 						if list(lstarr.values())[itr3][0] == list(lstarr.values())[itm][0] + (mliter-1):
+# 							if abs(list(lstarr.values())[itr3][1]-list(lstarr.values())[itm][1]) == (mliter-1):
+# 								groups.append([list(lstarr.keys())[itm],list(lstarr.keys())[itm + itr3]])
+# 				except IndexError:
+# 					continue
+# 	amt2merge = abs(ml - 1)
+# 	groups = [sortlist(g) for g in [sum(x,[]) for x in list(chunks(groups, amt2merge))]]
+# 	if "-v" in sys.argv[1::]:
+# 		print(f"Diagonal Combs: {groups}")
+# 	return groups
 
+# print(gen_win_diagonal(5,5,min2win=4))
+
+def gen_win_diagonal(w, h, min2win=3):
+    winning_diags = set()
+
+    # ↘️ Down-right diagonals
+    for row in range(h - min2win + 1):
+        for col in range(w - min2win + 1):
+            diag = [((row + i) * w + (col + i)) for i in range(min2win)]
+            winning_diags.add(tuple(diag))
+
+    # ↙️ Down-left diagonals
+    for row in range(h - min2win + 1):
+        for col in range(min2win - 1, w):
+            diag = [((row + i) * w + (col - i)) for i in range(min2win)]
+            winning_diags.add(tuple(diag))
+
+    return [list(d) for d in sorted(winning_diags)]
+
+print(gen_win_diagonal(5,5,min2win=4))
 
 
 def gen_win_conditions(wnum, hnum, m2w=3):
